@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal de Procedimentos Operacionais | Casa dos Ventos</title>
+<title>Portal de Procedimentos | Sistema de Gestão Integrada</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -36,15 +36,16 @@
   header {
     background: var(--primary);
     color: white;
-    padding: 0.9rem 1.75rem;
+    padding: 1rem 1.75rem;
     display: flex;
     align-items: center;
     border-bottom: 3px solid var(--accent);
   }
 
-  .logo-area { display: flex; align-items: center; gap: 0.9rem; }
-  .logo-img { height: 36px; width: auto; display: block; }
-  .logo-area span.subtitle { font-size: 0.8rem; color: var(--sky); font-weight: 400; }
+  .logo-area { display: flex; align-items: center; gap: 1.2rem; }
+  /* Logo aumentada de 36px para 52px conforme solicitado */
+  .logo-img { height: 52px; width: auto; display: block; }
+  .logo-area span.subtitle { font-size: 0.9rem; color: var(--sky); font-weight: 400; }
 
   /* ---------- Layout ---------- */
   .layout {
@@ -281,7 +282,8 @@
 <header>
   <div class="logo-area">
     <img src="logo-casa-dos-ventos-branca.png" alt="Casa dos Ventos" class="logo-img">
-    <span class="subtitle">Portal de Procedimentos · Gestão de Documentos ISO</span>
+    <!-- Título e subtítulo atualizados conforme solicitado -->
+    <span class="subtitle">Portal de Procedimentos · Sistema de Gestão Integrada</span>
   </div>
 </header>
 
@@ -328,11 +330,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-// -------------------------------------------------------------
-// Dados de exemplo. Substitua "url" pelo endereço real do PDF
-// (idealmente hospedado no mesmo domínio, para evitar bloqueio
-// de CORS no PDF.js — veja explicação enviada junto ao código).
-// -------------------------------------------------------------
 const SECTORS = [
   { id: "sso",          label: "SSO" },
   { id: "meio-ambiente", label: "Meio Ambiente" },
@@ -349,8 +346,9 @@ const DOCS = [
     rev: "05", date: "20/02/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
   { code: "PRO-020", title: "Gestão de Resíduos Sólidos", sector: "meio-ambiente",
     rev: "01", date: "05/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-  { code: "PRO-030", title: "Relatório de Sustentabilidade e Governança", sector: "esg",
-    rev: "01", date: "12/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  // Documento adicionado baseado no arquivo enviado:
+  { code: "REL-2025", title: "Relatório de Sustentabilidade 2025", sector: "esg",
+    rev: "01", date: "15/06/2026", url: "relatorio_sustentabilidade_2025.pdf" },
   { code: "PRO-040", title: "Código de Conduta e Compliance", sector: "integridade",
     rev: "03", date: "18/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
 ];
@@ -412,11 +410,6 @@ function applyFilters() {
   document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
 }
 
-// -------------------------------------------------------------
-// Visualizador protegido: renderiza o PDF em <canvas> via PDF.js
-// em vez de embutir o PDF nativo (iframe), então não existe menu
-// de "salvar" ou "imprimir" próprio do visualizador do navegador.
-// -------------------------------------------------------------
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
