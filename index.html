@@ -23,7 +23,6 @@
 
   * { margin:0; padding:0; box-sizing:border-box; }
 
-  /* Aplicação global da fonte Poppins */
   body, input, button, select, textarea {
     font-family: 'Poppins', -apple-system, 'Segoe UI', sans-serif;
   }
@@ -36,7 +35,6 @@
 
   code, .mono { font-family: 'IBM Plex Mono', 'Consolas', monospace; }
 
-  /* ---------- Header ---------- */
   header {
     background: var(--primary);
     color: white;
@@ -50,7 +48,6 @@
   .logo-img { height: 52px; width: auto; display: block; }
   .logo-area span.subtitle { font-size: 0.9rem; color: var(--sky); font-weight: 400; }
 
-  /* ---------- Layout ---------- */
   .layout {
     display: grid;
     grid-template-columns: 260px 1fr;
@@ -65,7 +62,6 @@
     .layout { grid-template-columns: 1fr; }
   }
 
-  /* ---------- Sidebar ---------- */
   aside {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -82,7 +78,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     font-size: 0.9rem;
-    font-family: 'Poppins', sans-serif; /* Forçando a fonte Poppins no Input */
+    font-family: 'Poppins', sans-serif;
     outline: none;
     background: var(--bg);
     color: var(--text);
@@ -127,7 +123,6 @@
     font-family: 'IBM Plex Mono', monospace;
   }
 
-  /* ---------- Document list ---------- */
   .list-header {
     display: flex;
     justify-content: space-between;
@@ -186,7 +181,6 @@
     font-size: 0.9rem;
   }
 
-  /* ---------- Modal / Viewer ---------- */
   .modal {
     display: none;
     position: fixed;
@@ -345,19 +339,21 @@ const SECTORS = [
   { id: "integridade",  label: "Integridade e Ética" },
 ];
 
+// Caminhos relativos apontando para a pasta pdfs/ dentro do projeto.
+// Renomeie os arquivos reais para bater com esses nomes, ou ajuste aqui.
 const DOCS = [
   { code: "PRO-001", title: "Inspeção Preventiva em Aerogeradores", sector: "sso",
-    rev: "04", date: "15/01/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+    rev: "04", date: "15/01/2026", url: "pdfs/pro-001.pdf" },
   { code: "PRO-002", title: "Manutenção em Subestações Elétricas", sector: "sso",
-    rev: "02", date: "10/02/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+    rev: "02", date: "10/02/2026", url: "pdfs/pro-002.pdf" },
   { code: "PRO-010", title: "Diretrizes de Segurança para Trabalho em Altura (NR-35)", sector: "sso",
-    rev: "05", date: "20/02/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+    rev: "05", date: "20/02/2026", url: "pdfs/pro-010.pdf" },
   { code: "PRO-020", title: "Gestão de Resíduos Sólidos", sector: "meio-ambiente",
-    rev: "01", date: "05/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+    rev: "01", date: "05/03/2026", url: "pdfs/pro-020.pdf" },
   { code: "REL-2025", title: "Relatório de Sustentabilidade 2025", sector: "esg",
-    rev: "01", date: "15/06/2026", url: "relatorio_sustentabilidade_2025.pdf" },
+    rev: "01", date: "15/06/2026", url: "pdfs/relatorio_sustentabilidade_2025.pdf" },
   { code: "PRO-040", title: "Código de Conduta e Compliance", sector: "integridade",
-    rev: "03", date: "18/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+    rev: "03", date: "18/03/2026", url: "pdfs/pro-040.pdf" },
 ];
 
 let activeSector = "all";
@@ -427,11 +423,11 @@ async function openViewer(title, url) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('pdfModal').style.display = 'flex';
   document.getElementById('viewerStatus').textContent = 'Carregando documento...';
-  
+
   const canvas = document.getElementById('pdfCanvas');
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
   buildWatermark();
 
   try {
@@ -441,8 +437,8 @@ async function openViewer(title, url) {
     renderPage(currentPage);
   } catch (err) {
     document.getElementById('viewerStatus').innerHTML =
-      `Erro ao carregar o arquivo PDF local por segurança do navegador (CORS).<br>
-       Execute esta página através de um servidor web local (como a extensão Live Server do VS Code) ou hospede o arquivo em um link web.`;
+      `Erro ao carregar o arquivo PDF. Verifique se o caminho está correto e se a página
+       está sendo servida via http/https (não abra o arquivo diretamente com file://).`;
   }
 }
 
