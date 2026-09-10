@@ -23,8 +23,12 @@
 
   * { margin:0; padding:0; box-sizing:border-box; }
 
-  body {
+  /* Aplicação global da fonte Poppins */
+  body, input, button, select, textarea {
     font-family: 'Poppins', -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  body {
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -78,8 +82,14 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif; /* Forçando a fonte Poppins no Input */
     outline: none;
     background: var(--bg);
+    color: var(--text);
+  }
+  .search-box input::placeholder {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-muted);
   }
   .search-box input:focus { border-color: var(--primary); }
 
@@ -418,7 +428,6 @@ async function openViewer(title, url) {
   document.getElementById('pdfModal').style.display = 'flex';
   document.getElementById('viewerStatus').textContent = 'Carregando documento...';
   
-  // Limpa canvas anterior
   const canvas = document.getElementById('pdfCanvas');
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -432,8 +441,8 @@ async function openViewer(title, url) {
     renderPage(currentPage);
   } catch (err) {
     document.getElementById('viewerStatus').innerHTML =
-      `Erro de acesso/CORS ao carregar o PDF local.<br>
-       Execute o projeto em um servidor local (ex: Live Server) ou utilize um link web (http/https).`;
+      `Erro ao carregar o arquivo PDF local por segurança do navegador (CORS).<br>
+       Execute esta página através de um servidor web local (como a extensão Live Server do VS Code) ou hospede o arquivo em um link web.`;
   }
 }
 
