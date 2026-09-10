@@ -43,7 +43,6 @@
   }
 
   .logo-area { display: flex; align-items: center; gap: 1.2rem; }
-  /* Logo aumentada de 36px para 52px conforme solicitado */
   .logo-img { height: 52px; width: auto; display: block; }
   .logo-area span.subtitle { font-size: 0.9rem; color: var(--sky); font-weight: 400; }
 
@@ -258,7 +257,7 @@
   }
   .viewer-controls button:disabled { opacity: 0.4; cursor: default; }
 
-  .viewer-status { font-size: 0.78rem; color: var(--sky); text-align: center; padding: 0.4rem; }
+  .viewer-status { font-size: 0.82rem; color: var(--sky); text-align: center; padding: 0.4rem; }
 
   footer {
     text-align: center;
@@ -282,7 +281,6 @@
 <header>
   <div class="logo-area">
     <img src="logo-casa-dos-ventos-branca.png" alt="Casa dos Ventos" class="logo-img">
-    <!-- Título e subtítulo atualizados conforme solicitado -->
     <span class="subtitle">Portal de Procedimentos · Sistema de Gestão Integrada</span>
   </div>
 </header>
@@ -346,7 +344,6 @@ const DOCS = [
     rev: "05", date: "20/02/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
   { code: "PRO-020", title: "Gestão de Resíduos Sólidos", sector: "meio-ambiente",
     rev: "01", date: "05/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-  // Documento adicionado baseado no arquivo enviado:
   { code: "REL-2025", title: "Relatório de Sustentabilidade 2025", sector: "esg",
     rev: "01", date: "15/06/2026", url: "relatorio_sustentabilidade_2025.pdf" },
   { code: "PRO-040", title: "Código de Conduta e Compliance", sector: "integridade",
@@ -420,6 +417,12 @@ async function openViewer(title, url) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('pdfModal').style.display = 'flex';
   document.getElementById('viewerStatus').textContent = 'Carregando documento...';
+  
+  // Limpa canvas anterior
+  const canvas = document.getElementById('pdfCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
   buildWatermark();
 
   try {
@@ -428,8 +431,9 @@ async function openViewer(title, url) {
     document.getElementById('viewerStatus').textContent = '';
     renderPage(currentPage);
   } catch (err) {
-    document.getElementById('viewerStatus').textContent =
-      'Não foi possível carregar o documento (verifique CORS/URL do arquivo).';
+    document.getElementById('viewerStatus').innerHTML =
+      `Erro de acesso/CORS ao carregar o PDF local.<br>
+       Execute o projeto em um servidor local (ex: Live Server) ou utilize um link web (http/https).`;
   }
 }
 
