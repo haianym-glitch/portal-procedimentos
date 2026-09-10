@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Procedimentos Operacionais | Casa dos Ventos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #007782;
+    --primary-dark: #004d55;
+    --accent: #A0D228;
+    --sky: #9AEFE9;
+    --bg: #F4F7F6;
+    --surface: #FFFFFF;
+    --text: #0F2C2E;
+    --text-muted: #5B6E6D;
+    --border: #DCE6E4;
+    --radius: 6px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Poppins', -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  code, .mono { font-family: 'IBM Plex Mono', 'Consolas', monospace; }
+
+  /* ---------- Header ---------- */
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 0.9rem 1.75rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid var(--accent);
+  }
+
+  .logo-area { display: flex; align-items: center; gap: 0.9rem; }
+  .logo-img { height: 36px; width: auto; display: block; }
+  .logo-area span.subtitle { font-size: 0.8rem; color: var(--sky); font-weight: 400; }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1180px;
+    margin: 2rem auto;
+    gap: 2rem;
+    padding: 0 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Sidebar ---------- */
+  aside {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .search-box { margin-bottom: 1rem; }
+  .search-box input {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    outline: none;
+    background: var(--bg);
+  }
+  .search-box input:focus { border-color: var(--primary); }
+
+  .sector-nav-title {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin: 0.25rem 0 0.5rem;
+  }
+
+  .sector-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: none;
+    border: none;
+    border-left: 3px solid transparent;
+    padding: 0.55rem 0.6rem;
+    text-align: left;
+    font-size: 0.87rem;
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 2px;
+  }
+  .sector-btn:hover { background: var(--bg); }
+  .sector-btn.active {
+    background: rgba(0,119,130,0.07);
+    border-left-color: var(--primary);
+    font-weight: 600;
+  }
+  .sector-btn .count {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ---------- Document list ---------- */
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+  }
+  .list-header h2 { font-size: 1.15rem; }
+  .list-header .result-count { font-size: 0.82rem; color: var(--text-muted); }
+
+  .doc-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 0.95rem 1.1rem;
+    margin-bottom: 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  .doc-row[data-sector="meio-ambiente"] { border-left-color: var(--accent); }
+  .doc-row[data-sector="esg"] { border-left-color: var(--sky); }
+  .doc-row[data-sector="integridade"] { border-left-color: var(--text-muted); }
+
+  .doc-info .code {
+    display: inline-block;
+    font-size: 0.72rem;
+    color: var(--primary);
+    background: rgba(0,119,130,0.08);
+    padding: 1px 7px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+  }
+  .doc-info h3 { font-size: 0.98rem; font-weight: 600; margin-bottom: 3px; }
+  .doc-info .meta { font-size: 0.78rem; color: var(--text-muted); }
+
+  .btn-view {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-view:hover { background: var(--primary-dark); }
+
+  .empty-state {
+    display: none;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* ---------- Modal / Viewer ---------- */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 20, 22, 0.82);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background: #3d4547;
+    width: min(920px, 94vw);
+    height: 90vh;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-header {
+    background: var(--primary-dark);
+    color: white;
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h3 { font-size: 0.95rem; font-weight: 600; }
+  .close-btn {
+    background: none; border: none; color: white;
+    font-size: 1.4rem; cursor: pointer; line-height: 1;
+  }
+
+  .viewer-body {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    user-select: none;
+  }
+  .viewer-body canvas { box-shadow: 0 4px 18px rgba(0,0,0,0.4); }
+
+  .watermark {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+    justify-content: space-around;
+    opacity: 0.12;
+  }
+  .watermark span {
+    transform: rotate(-30deg);
+    font-size: 0.85rem;
+    color: white;
+    white-space: nowrap;
+  }
+
+  .viewer-controls {
+    background: var(--primary-dark);
+    color: white;
+    padding: 0.6rem 1.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+  .viewer-controls button {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .viewer-controls button:disabled { opacity: 0.4; cursor: default; }
+
+  .viewer-status { font-size: 0.78rem; color: var(--sky); text-align: center; padding: 0.4rem; }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  @media print {
+    body::before {
+      content: "Impressão não autorizada — Casa dos Ventos";
+      position: fixed; inset: 0; display:flex; align-items:center; justify-content:center;
+      font-size: 2rem; z-index: 9999; background: white;
+    }
+    body > * { display: none !important; }
+  }
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<header>
+  <div class="logo-area">
+    <img src="logo-casa-dos-ventos-branca.png" alt="Casa dos Ventos" class="logo-img">
+    <span class="subtitle">Portal de Procedimentos · Gestão de Documentos ISO</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Buscar por nome ou código..." oninput="applyFilters()">
+    </div>
+    <div class="sector-nav-title">Setores</div>
+    <div id="sectorNav"></div>
+  </aside>
+
+  <main>
+    <div class="list-header">
+      <h2 id="listTitle">Todos os procedimentos</h2>
+      <span class="result-count" id="resultCount"></span>
+    </div>
+    <div id="docList"></div>
+    <div class="empty-state" id="emptyState">Nenhum procedimento encontrado com esse termo.</div>
+  </main>
+</div>
+
+<footer>Casa dos Ventos</footer>
+
+<!-- Viewer -->
+<div class="modal" id="pdfModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle">Documento</h3>
+      <button class="close-btn" onclick="closeViewer()">&times;</button>
+    </div>
+    <div class="viewer-body" id="viewerBody">
+      <canvas id="pdfCanvas"></canvas>
+      <div class="watermark" id="watermark"></div>
+    </div>
+    <div class="viewer-status" id="viewerStatus"></div>
+    <div class="viewer-controls">
+      <button id="prevBtn" onclick="changePage(-1)">‹ Anterior</button>
+      <span id="pageIndicator">Página 1 / 1</span>
+      <button id="nextBtn" onclick="changePage(1)">Próxima ›</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+// -------------------------------------------------------------
+// Dados de exemplo. Substitua "url" pelo endereço real do PDF
+// (idealmente hospedado no mesmo domínio, para evitar bloqueio
+// de CORS no PDF.js — veja explicação enviada junto ao código).
+// -------------------------------------------------------------
+const SECTORS = [
+  { id: "sso",          label: "SSO" },
+  { id: "meio-ambiente", label: "Meio Ambiente" },
+  { id: "esg",          label: "ESG" },
+  { id: "integridade",  label: "Integridade e Ética" },
+];
+
+const DOCS = [
+  { code: "PRO-001", title: "Inspeção Preventiva em Aerogeradores", sector: "sso",
+    rev: "04", date: "15/01/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { code: "PRO-002", title: "Manutenção em Subestações Elétricas", sector: "sso",
+    rev: "02", date: "10/02/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { code: "PRO-010", title: "Diretrizes de Segurança para Trabalho em Altura (NR-35)", sector: "sso",
+    rev: "05", date: "20/02/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { code: "PRO-020", title: "Gestão de Resíduos Sólidos", sector: "meio-ambiente",
+    rev: "01", date: "05/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { code: "PRO-030", title: "Relatório de Sustentabilidade e Governança", sector: "esg",
+    rev: "01", date: "12/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { code: "PRO-040", title: "Código de Conduta e Compliance", sector: "integridade",
+    rev: "03", date: "18/03/2026", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+];
+
+let activeSector = "all";
+
+function renderSidebar() {
+  const nav = document.getElementById('sectorNav');
+  const counts = {};
+  DOCS.forEach(d => counts[d.sector] = (counts[d.sector] || 0) + 1);
+
+  const items = [{ id: "all", label: "Todos os setores" }, ...SECTORS];
+  nav.innerHTML = items.map(s => `
+    <button class="sector-btn ${activeSector === s.id ? 'active' : ''}" data-sector="${s.id}">
+      <span>${s.label}</span>
+      <span class="count">${s.id === 'all' ? DOCS.length : (counts[s.id] || 0)}</span>
+    </button>
+  `).join('');
+
+  nav.querySelectorAll('.sector-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSector = btn.dataset.sector;
+      renderSidebar();
+      applyFilters();
+    });
+  });
+}
+
+function applyFilters() {
+  const term = document.getElementById('searchInput').value.trim().toLowerCase();
+  const filtered = DOCS.filter(d => {
+    const matchesSector = activeSector === 'all' || d.sector === activeSector;
+    const matchesTerm = !term || d.title.toLowerCase().includes(term) || d.code.toLowerCase().includes(term);
+    return matchesSector && matchesTerm;
+  });
+
+  const sectorLabel = activeSector === 'all' ? 'Todos os procedimentos'
+    : SECTORS.find(s => s.id === activeSector).label;
+  document.getElementById('listTitle').textContent = sectorLabel;
+  document.getElementById('resultCount').textContent =
+    filtered.length + (filtered.length === 1 ? ' documento' : ' documentos');
+
+  const list = document.getElementById('docList');
+  list.innerHTML = filtered.map(d => `
+    <div class="doc-row" data-sector="${d.sector}">
+      <div class="doc-info">
+        <span class="code mono">${d.code}</span>
+        <h3>${d.title}</h3>
+        <span class="meta">Rev. ${d.rev} · Atualizado em ${d.date}</span>
+      </div>
+      <button class="btn-view" data-url="${d.url}" data-title="${d.code} — ${d.title}">Visualizar</button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.btn-view').forEach(btn => {
+    btn.addEventListener('click', () => openViewer(btn.dataset.title, btn.dataset.url));
+  });
+
+  document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+}
+
+// -------------------------------------------------------------
+// Visualizador protegido: renderiza o PDF em <canvas> via PDF.js
+// em vez de embutir o PDF nativo (iframe), então não existe menu
+// de "salvar" ou "imprimir" próprio do visualizador do navegador.
+// -------------------------------------------------------------
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+let currentPdf = null;
+let currentPage = 1;
+
+async function openViewer(title, url) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('pdfModal').style.display = 'flex';
+  document.getElementById('viewerStatus').textContent = 'Carregando documento...';
+  buildWatermark();
+
+  try {
+    currentPdf = await pdfjsLib.getDocument(url).promise;
+    currentPage = 1;
+    document.getElementById('viewerStatus').textContent = '';
+    renderPage(currentPage);
+  } catch (err) {
+    document.getElementById('viewerStatus').textContent =
+      'Não foi possível carregar o documento (verifique CORS/URL do arquivo).';
+  }
+}
+
+async function renderPage(num) {
+  const page = await currentPdf.getPage(num);
+  const canvas = document.getElementById('pdfCanvas');
+  const ctx = canvas.getContext('2d');
+  const viewport = page.getViewport({ scale: 1.4 });
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  await page.render({ canvasContext: ctx, viewport }).promise;
+
+  document.getElementById('pageIndicator').textContent = `Página ${num} / ${currentPdf.numPages}`;
+  document.getElementById('prevBtn').disabled = num <= 1;
+  document.getElementById('nextBtn').disabled = num >= currentPdf.numPages;
+}
+
+function changePage(delta) {
+  if (!currentPdf) return;
+  const next = currentPage + delta;
+  if (next < 1 || next > currentPdf.numPages) return;
+  currentPage = next;
+  renderPage(currentPage);
+}
+
+function buildWatermark() {
+  const wm = document.getElementById('watermark');
+  const label = 'CASA DOS VENTOS · CONSULTA ONLINE · ' + new Date().toLocaleDateString('pt-BR');
+  wm.innerHTML = Array.from({ length: 12 }).map(() => `<span>${label}</span>`).join('');
+}
+
+function closeViewer() {
+  document.getElementById('pdfModal').style.display = 'none';
+  currentPdf = null;
+}
+
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && ['s', 'p', 'u'].includes(e.key.toLowerCase())) {
+    e.preventDefault();
+    alert('Cópia, gravação ou impressão não são permitidas para este documento.');
+  }
+});
+
+renderSidebar();
+applyFilters();
+</script>
+</body>
+</html>
